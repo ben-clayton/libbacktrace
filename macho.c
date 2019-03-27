@@ -127,16 +127,7 @@ struct macho_syminfo_data
     uintptr_t max_addr;
 };
 
-uint16_t
-macho_file_to_host_u16 (int file_bytes_swapped, uint16_t input)
-{
-  if (file_bytes_swapped)
-    return (input >> 8) | (input << 8);
-  else
-    return input;
-}
-
-uint32_t
+static uint32_t
 macho_file_to_host_u32 (int file_bytes_swapped, uint32_t input)
 {
   if (file_bytes_swapped)
@@ -152,7 +143,7 @@ macho_file_to_host_u32 (int file_bytes_swapped, uint32_t input)
     }
 }
 
-uint64_t
+static uint64_t
 macho_file_to_host_u64 (int file_bytes_swapped, uint64_t input)
 {
   if (file_bytes_swapped)
@@ -185,7 +176,7 @@ typedef struct section section_native_t;
 #endif
 
 // Gets a view into a Mach-O image, taking any slice offset into account
-int
+static int
 macho_get_view (struct backtrace_state *state, int descriptor,
                 off_t offset, size_t size,
                 backtrace_error_callback error_callback,
@@ -197,7 +188,7 @@ macho_get_view (struct backtrace_state *state, int descriptor,
                              error_callback, data, view);
 }
 
-int
+static int
 macho_get_commands (struct backtrace_state *state, int descriptor,
                     backtrace_error_callback error_callback,
                     void *data, struct macho_commands_view *commands_view,
@@ -219,7 +210,7 @@ macho_get_commands (struct backtrace_state *state, int descriptor,
     goto end;
   file_header_view_valid = 1;
 
-  switch (*(uint32_t *) file_header_view.data)
+  switch (*(const uint32_t *) file_header_view.data)
     {
       case MH_MAGIC:
         if (BACKTRACE_BITS == 32)
@@ -325,7 +316,7 @@ macho_get_commands (struct backtrace_state *state, int descriptor,
       file_header_view_valid = 1;
 
       // The endianess of the slice may be different than the fat image
-      switch (*(uint32_t *) file_header_view.data)
+      switch (*(const uint32_t *) file_header_view.data)
         {
           case MH_MAGIC:
             if (BACKTRACE_BITS == 32)
@@ -385,7 +376,7 @@ end:
   return ret;
 }
 
-int
+static int
 macho_get_uuid (struct backtrace_state *state ATTRIBUTE_UNUSED,
                 int descriptor ATTRIBUTE_UNUSED,
                 backtrace_error_callback error_callback,
@@ -430,7 +421,7 @@ macho_get_uuid (struct backtrace_state *state ATTRIBUTE_UNUSED,
             }
 
           uuid_command =
-              (struct uuid_command *) raw_command;
+              (const struct uuid_command *) raw_command;
           memcpy (uuid, uuid_command->uuid, sizeof (uuid_t));
           return 1;
         }
@@ -446,7 +437,7 @@ macho_get_uuid (struct backtrace_state *state ATTRIBUTE_UNUSED,
  * WARNING: This does not take ASLR into account, which is ubiquitous on recent
  * Darwin platforms.
  */
-int
+static int
 macho_get_addr_range (struct backtrace_state *state ATTRIBUTE_UNUSED,
                       int descriptor ATTRIBUTE_UNUSED,
                       backtrace_error_callback error_callback,
@@ -496,7 +487,7 @@ macho_get_addr_range (struct backtrace_state *state ATTRIBUTE_UNUSED,
               return 0;
             }
 
-          raw_segment = (segment_command_native_t *) raw_command;
+          raw_segment = (const segment_command_native_t *) raw_command;
 
           segment_vmaddr = macho_file_to_host_usize (
               commands_view->bytes_swapped, raw_segment->vmaddr);
@@ -544,7 +535,7 @@ macho_symbol_compare_addr (const void *left_raw, const void *right_raw)
     return 0;
 }
 
-int
+static int
 macho_symbol_type_relevant (uint8_t type)
 {
   uint8_t type_field = (uint8_t) (type & N_TYPE);
@@ -553,7 +544,7 @@ macho_symbol_type_relevant (uint8_t type)
          (type_field == N_ABS || type_field == N_SECT);
 }
 
-int
+static int
 macho_add_symtab (struct backtrace_state *state,
                   backtrace_error_callback error_callback,
                   void *data, int descriptor,
@@ -614,7 +605,7 @@ macho_add_symtab (struct backtrace_state *state,
               return 0;
             }
 
-          symtab_command = (struct symtab_command *) raw_command;
+          symtab_command = (const struct symtab_command *) raw_command;
 
           symbol_table_offset = macho_file_to_host_u32 (
               commands_view->bytes_swapped, symtab_command->symoff);
@@ -806,7 +797,7 @@ end:
   return ret;
 }
 
-int
+static int
 macho_try_dwarf (struct backtrace_state *state,
                  backtrace_error_callback error_callback,
                  void *data, fileline *fileline_fn, uuid_t *executable_uuid,
@@ -1038,7 +1029,7 @@ end:
   return ret;
 }
 
-int
+static int
 macho_try_dsym (struct backtrace_state *state,
                 backtrace_error_callback error_callback,
                 void *data, fileline *fileline_fn, uuid_t *executable_uuid,
@@ -1106,7 +1097,7 @@ end:
   return ret;
 }
 
-int
+static int
 macho_add (struct backtrace_state *state,
            backtrace_error_callback error_callback, void *data, int descriptor,
            const char *filename, fileline *fileline_fn, intptr_t vmslide,
@@ -1335,11 +1326,11 @@ macho_nosyms (struct backtrace_state *state ATTRIBUTE_UNUSED,
 
 int
 backtrace_initialize (struct backtrace_state *state,
-		      const char *filename ATTRIBUTE_UNUSED, int descriptor,
+		      const char *filename ATTRIBUTE_UNUSED,
+          int descriptor ATTRIBUTE_UNUSED,
 		      backtrace_error_callback error_callback,
 		      void *data, fileline *fileline_fn)
 {
-  int ret;
   fileline macho_fileline_fn = macho_nodebug;
   int found_sym = 0;
   int found_dwarf = 0;
