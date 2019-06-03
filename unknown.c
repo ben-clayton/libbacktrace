@@ -49,6 +49,16 @@ unknown_fileline (struct backtrace_state *state ATTRIBUTE_UNUSED,
   return callback (data, pc, NULL, 0, NULL);
 }
 
+/* Attempts to retrieve the current exectuable's path, storing it
+   in executable_path, if size is large enough to hold it.
+   Returns 1 on success, 0 on error. */
+int
+backtrace_get_executable_path(const char* executable_path,
+                              size_t size)
+{
+  return 0;
+}
+
 /* Initialize the backtrace data when we don't know how to read the
    debug info.  */
 

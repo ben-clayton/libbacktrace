@@ -150,6 +150,12 @@ struct backtrace_state
   struct backtrace_freelist_struct *freelist;
 };
 
+/* Attempts to retrieve the current exectuable's path, storing it
+   in executable_path, if size is large enough to hold it.
+   Returns 1 on success, 0 on error. */
+extern int backtrace_get_executable_path(const char* executable_path,
+			   size_t size);
+
 /* Open a file for reading.  Returns -1 on error.  If DOES_NOT_EXIST
    is not NULL, *DOES_NOT_EXIST will be set to 0 normally and set to 1
    if the file does not exist.  If the file does not exist and

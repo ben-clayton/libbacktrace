@@ -1586,6 +1586,16 @@ xcoff_add_shared_libs (struct backtrace_state *state,
 }
 #endif /* HAVE_LOADQUERY */
 
+/* Attempts to retrieve the current exectuable's path, storing it
+   in executable_path, if size is large enough to hold it.
+   Returns 1 on success, 0 on error. */
+int
+backtrace_get_executable_path(const char* executable_path,
+                              size_t size)
+{
+  return 0;
+}
+
 /* Initialize the backtrace data we need from an XCOFF executable.
    Returns 1 on success, 0 on failure.  */
 

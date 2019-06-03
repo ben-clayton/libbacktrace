@@ -3281,6 +3281,13 @@ phdr_callback (struct dl_phdr_info *info, size_t size ATTRIBUTE_UNUSED,
   return 0;
 }
 
+int
+backtrace_get_executable_path(const char* executable_path,
+                              size_t size)
+{
+  return 0;
+}
+
 /* Initialize the backtrace data we need from an ELF executable.  At
    the ELF level, all we need to do is find the debug info
    sections.  */

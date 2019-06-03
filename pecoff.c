@@ -890,6 +890,16 @@ coff_add (struct backtrace_state *state, int descriptor,
   return 0;
 }
 
+/* Attempts to retrieve the current exectuable's path, storing it
+   in executable_path, if size is large enough to hold it.
+   Returns 1 on success, 0 on error. */
+int
+backtrace_get_executable_path(const char* executable_path,
+                              size_t size)
+{
+  return 0;
+}
+
 /* Initialize the backtrace data we need from an ELF executable.  At
    the ELF level, all we need to do is find the debug info
    sections.  */

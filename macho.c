@@ -1337,6 +1337,13 @@ macho_nosyms (struct backtrace_state *state ATTRIBUTE_UNUSED,
 }
 
 int
+backtrace_get_executable_path(const char* executable_path,
+                              size_t size)
+{
+  return _NSGetExecutablePath(executable_path, &size) == 0 ? : 1 : 0;
+}
+
+int
 backtrace_initialize (struct backtrace_state *state,
                       const char *filename,
                       int descriptor,

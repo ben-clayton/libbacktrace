@@ -59,7 +59,7 @@ fileline_initialize (struct backtrace_state *state,
   int called_error_callback;
   int descriptor;
   const char *filename;
-  char buf[64];
+  char buf[1024];
 
   if (!state->threaded)
     failed = state->fileline_initialization_failed;
@@ -92,16 +92,19 @@ fileline_initialize (struct backtrace_state *state,
 	case 0:
 	  filename = state->filename;
 	  break;
-	case 1:
-	  filename = getexecname ();
+  case 1:
+    if (backtrace_get_executable_path(buf, sizeof(buf)) == 0)
+        filename = buf;
 	  break;
 	case 2:
+	  filename = getexecname ();
+	case 3:
 	  filename = "/proc/self/exe";
 	  break;
-	case 3:
+	case 4:
 	  filename = "/proc/curproc/file";
 	  break;
-	case 4:
+	case 5:
 	  snprintf (buf, sizeof (buf), "/proc/%ld/object/a.out",
 		    (long) getpid ());
 	  filename = buf;
