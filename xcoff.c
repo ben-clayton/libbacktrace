@@ -1590,8 +1590,7 @@ xcoff_add_shared_libs (struct backtrace_state *state,
    in executable_path, if size is large enough to hold it.
    Returns 1 on success, 0 on error. */
 int
-backtrace_get_executable_path(const char* executable_path,
-                              size_t size)
+backtrace_get_executable_path(char* executable_path, size_t size)
 {
   return 0;
 }

@@ -3282,8 +3282,7 @@ phdr_callback (struct dl_phdr_info *info, size_t size ATTRIBUTE_UNUSED,
 }
 
 int
-backtrace_get_executable_path(const char* executable_path,
-                              size_t size)
+backtrace_get_executable_path(char* executable_path, size_t size)
 {
   return 0;
 }
