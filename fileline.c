@@ -93,7 +93,7 @@ fileline_initialize (struct backtrace_state *state,
 	  filename = state->filename;
 	  break;
   case 1:
-    if (backtrace_get_executable_path(buf, sizeof(buf)) == 0)
+    if (backtrace_get_executable_path(buf, sizeof(buf)) == 1)
         filename = buf;
 	  break;
 	case 2:
